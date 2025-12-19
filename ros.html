@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROS2 Visual Guide - Beginner to Advanced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 3em;
+            margin: 30px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .level {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .level:hover {
+            transform: translateY(-5px);
+        }
+
+        .level-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .level-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.9em;
+        }
+
+        .level-title {
+            font-size: 2em;
+            color: #667eea;
+        }
+
+        .diagram {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .node-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 10px;
+            min-width: 150px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .node-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .topic-box {
+            background: #ffd93d;
+            color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 10px;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-weight: bold;
+        }
+
+        .service-box {
+            background: #6bcf7f;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 10px;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-weight: bold;
+        }
+
+        .action-box {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 10px;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-weight: bold;
+        }
+
+        .arrow {
+            font-size: 2em;
+            color: #667eea;
+            margin: 0 10px;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .flow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .explanation {
+            background: #e8eaf6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .dds-layer {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px dashed #ffc107;
+        }
+
+        .toggle-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .toggle-content.active {
+            max-height: 5000px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .architecture-box {
+            border: 3px solid #667eea;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .qos-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 0 5px;
+        }
+
+        .reliable { background: #4caf50; }
+        .best-effort { background: #ff9800; }
+
+        .animated-data {
+            animation: dataFlow 3s infinite;
+        }
+
+        @keyframes dataFlow {
+            0%, 100% { transform: translateX(0); opacity: 1; }
+            50% { transform: translateX(20px); opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 ROS2 Visual Guide</h1>
+        <p style="text-align: center; color: white; font-size: 1.2em; margin-bottom: 30px;">
+            From Beginner to Advanced - Interactive Learning Journey
+        </p>
+
+        <!-- LEVEL 1: BEGINNER -->
+        <div class="level">
+            <div class="level-header" onclick="toggleLevel('level1')">
+                <span class="level-badge">LEVEL 1</span>
+                <h2 class="level-title">🌱 Beginner: What is ROS2?</h2>
+            </div>
+            <div id="level1" class="toggle-content active">
+                <div class="explanation">
+                    <h3>🎯 Simple Analogy</h3>
+                    <p>Think of ROS2 as a <strong>postal system for robots</strong>. Just like how the postal service helps different people communicate by sending letters, ROS2 helps different parts of a robot communicate by sending messages.</p>
+                </div>
+
+                <div class="diagram">
+                    <h3 style="text-align: center; margin-bottom: 20px;">Basic Concept: Nodes Talking</h3>
+                    <div class="flow-container">
+                        <div class="node-box">
+                            📷<br>Camera Node<br><small>(Takes pictures)</small>
+                        </div>
+                        <span class="arrow">→</span>
+                        <div class="topic-box animated-data">
+                            📬 /image_data<br><small>(Message)</small>
+                        </div>
+                        <span class="arrow">→</span>
+                        <div class="node-box">
+                            🧠<br>Brain Node<br><small>(Processes images)</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="explanation">
+                    <h3>🔑 Key Terms</h3>
+                    <ul>
+                        <li><strong>Node:</strong> A small program that does one specific job (like reading sensors, moving motors)</li>
+                        <li><strong>Topic:</strong> A named channel where nodes send and receive messages</li>
+                        <li><strong>Message:</strong> The actual data being sent (like sensor readings, commands)</li>
+                    </ul>
+                </div>
+
+                <div class="code-block">
+<span class="comment"># Your first ROS2 node - Python</span>
+<span class="keyword">import</span> rclpy
+<span class="keyword">from</span> rclpy.node <span class="keyword">import</span> Node
+
+<span class="keyword">class</span> HelloNode(Node):
+    <span class="keyword">def</span> __init__(self):
+        super().__init__(<span class="string">'hello_node'</span>)
+        self.get_logger().info(<span class="string">'Hello from ROS2!'</span>)
+
+<span class="keyword">def</span> main():
+    rclpy.init()
+    node = HelloNode()
+    rclpy.spin(node)
+                </div>
+            </div>
+        </div>
+
+        <!-- LEVEL 2: INTERMEDIATE -->
+        <div class="level">
+            <div class="level-header" onclick="toggleLevel('level2')">
+                <span class="level-badge">LEVEL 2</span>
+                <h2 class="level-title">🚀 Intermediate: Communication Patterns</h2>
+            </div>
+            <div id="level2" class="toggle-content active">
+                <div class="explanation">
+                    <h3>📡 Three Ways to Communicate</h3>
+                    <p>ROS2 has three main communication patterns, like different types of conversations:</p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="diagram">
+                        <h4 style="text-align: center;">1️⃣ Topics (Pub/Sub)</h4>
+                        <p style="text-align: center;"><em>One-way broadcast, many listeners</em></p>
+                        <div class="flow-container" style="flex-direction: column;">
+                            <div class="node-box">📻 Publisher<br>(Weather Station)</div>
+                            <span class="arrow" style="transform: rotate(90deg);">→</span>
+                            <div class="topic-box">/temperature</div>
+                            <div style="display: flex; gap: 10px; justify-content: center;">
+                                <span class="arrow" style="transform: rotate(45deg);">→</span>
+                                <span class="arrow" style="transform: rotate(90deg);">→</span>
+                                <span class="arrow" style="transform: rotate(135deg);">→</span>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <div class="node-box" style="font-size: 0.8em;">Display</div>
+                                <div class="node-box" style="font-size: 0.8em;">Logger</div>
+                                <div class="node-box" style="font-size: 0.8em;">AC Control</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="diagram">
+                        <h4 style="text-align: center;">2️⃣ Services (Request/Reply)</h4>
+                        <p style="text-align: center;"><em>Two-way, wait for answer</em></p>
+                        <div class="flow-container" style="flex-direction: column;">
+                            <div class="node-box">❓ Client<br>(Asks question)</div>
+                            <span class="arrow" style="transform: rotate(90deg);">→</span>
+                            <div class="service-box">🔧 /add_two_ints<br>Request: 5 + 3</div>
+                            <span class="arrow" style="transform: rotate(90deg);">→</span>
+                            <div class="node-box">💡 Server<br>(Calculates)</div>
+                            <span class="arrow" style="transform: rotate(270deg);">→</span>
+                            <div class="service-box">✅ Response: 8</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="diagram">
+                    <h4 style="text-align: center;">3️⃣ Actions (Long-running Tasks)</h4>
+                    <p style="text-align: center;"><em>Request + Continuous Feedback + Final Result</em></p>
+                    <div class="flow-container">
+                        <div class="node-box">🎯 Action Client<br>"Move to goal"</div>
+                        <span class="arrow">→</span>
+                        <div class="action-box">🏃 /navigate_to_pose<br>Goal: (x:10, y:5)</div>
+                        <span class="arrow">→</span>
+                        <div class="node-box">🤖 Action Server<br>(Robot moving)</div>
+                    </div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <div class="action-box" style="display: inline-block;">📊 Feedback: 25% complete...</div>
+                        <div class="action-box" style="display: inline-block;">📊 Feedback: 50% complete...</div>
+                        <div class="action-box" style="display: inline-block;">✅ Result: Success!</div>
+                    </div>
+                </div>
+
+                <div class="explanation">
+                    <h3>🎭 Real Drone Example</h3>
+                    <div class="flow-container" style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                        <div class="node-box">📷 Camera</div>
+                        <span class="arrow">→</span>
+                        <div class="topic-box">/image</div>
+                        <span class="arrow">→</span>
+                        <div class="node-box">🎯 Person<br>Tracker</div>
+                        <span class="arrow">→</span>
+                        <div class="topic-box">/target_pose</div>
+                        <span class="arrow">→</span>
+                        <div class="node-box">🎮 Gimbal<br>Controller</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEVEL 3: ADVANCED -->
+        <div class="level">
+            <div class="level-header" onclick="toggleLevel('level3')">
+                <span class="level-badge">LEVEL 3</span>
+                <h2 class="level-title">⚡ Advanced: Architecture & QoS</h2>
+            </div>
+            <div id="level3" class="toggle-content active">
+                <div class="dds-layer">
+                    <h3 style="text-align: center;">🏗️ ROS2 Architecture Layers</h3>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <div class="architecture-box" style="background: #e3f2fd;">
+                            <strong>Your Application</strong><br>
+                            <small>Python/C++ Nodes</small>
+                        </div>
+                        <div style="margin: 10px 0;">↓</div>
+                        <div class="architecture-box" style="background: #fff9c4;">
+                            <strong>ROS2 Client Library (rclpy/rclcpp)</strong><br>
+                            <small>ROS2 API</small>
+                        </div>
+                        <div style="margin: 10px 0;">↓</div>
+                        <div class="architecture-box" style="background: #ffccbc;">
+                            <strong>ROS2 Middleware (rmw)</strong><br>
+                            <small>Abstraction Layer</small>
+                        </div>
+                        <div style="margin: 10px 0;">↓</div>
+                        <div class="architecture-box" style="background: #c8e6c9;">
+                            <strong>DDS (Data Distribution Service)</strong><br>
+                            <small>Fast DDS, Cyclone DDS, etc.</small>
+                        </div>
+                        <div style="margin: 10px 0;">↓</div>
+                        <div class="architecture-box" style="background: #d1c4e9;">
+                            <strong>Network (UDP/TCP)</strong><br>
+                            <small>Actual data transmission</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="explanation">
+                    <h3>🎚️ Quality of Service (QoS) - Message Delivery Guarantee</h3>
+                    <p>QoS profiles control HOW messages are delivered. Think of it like shipping options:</p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="diagram">
+                        <h4><span class="qos-indicator best-effort"></span> Best Effort</h4>
+                        <ul>
+                            <li>✅ Fast, low latency</li>
+                            <li>❌ May lose messages</li>
+                            <li>📹 Use for: Camera streams, sensor data</li>
+                            <li>💡 Like regular mail - fast but might get lost</li>
+                        </ul>
+                    </div>
+
+                    <div class="diagram">
+                        <h4><span class="qos-indicator reliable"></span> Reliable</h4>
+                        <ul>
+                            <li>✅ Guaranteed delivery</li>
+                            <li>❌ Slightly slower</li>
+                            <li>🎯 Use for: Commands, critical data</li>
+                            <li>💡 Like certified mail - guaranteed delivery</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-block">
+<span class="comment"># Setting QoS in Python</span>
+<span class="keyword">from</span> rclpy.qos <span class="keyword">import</span> QoSProfile, ReliabilityPolicy, HistoryPolicy
+
+<span class="comment"># For sensor data (fast, can lose some)</span>
+sensor_qos = QoSProfile(
+    reliability=ReliabilityPolicy.BEST_EFFORT,
+    history=HistoryPolicy.KEEP_LAST,
+    depth=<span class="string">10</span>
+)
+
+<span class="comment"># For critical commands (must arrive)</span>
+command_qos = QoSProfile(
+    reliability=ReliabilityPolicy.RELIABLE,
+    history=HistoryPolicy.KEEP_ALL
+)
+
+<span class="comment"># Create publisher with QoS</span>
+self.publisher = self.create_publisher(
+    Image, 
+    <span class="string">'/camera/image'</span>, 
+    sensor_qos
+)
+                </div>
+
+                <div class="explanation">
+                    <h3>🔧 Advanced Features</h3>
+                    <div class="grid-2">
+                        <div class="feature-card">
+                            <h4>⏱️ Lifecycle Nodes</h4>
+                            <p>Nodes with states: Unconfigured → Inactive → Active</p>
+                            <p>Control startup, shutdown gracefully</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🔍 Discovery</h4>
+                            <p>Automatic node/topic detection</p>
+                            <p>No central master needed!</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🔒 Security</h4>
+                            <p>DDS Security (SROS2)</p>
+                            <p>Encrypted communication</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>📦 Composition</h4>
+                            <p>Run multiple nodes in one process</p>
+                            <p>Reduced overhead, faster</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEVEL 4: EXPERT -->
+        <div class="level">
+            <div class="level-header" onclick="toggleLevel('level4')">
+                <span class="level-badge">LEVEL 4</span>
+                <h2 class="level-title">🎓 Expert: System Design</h2>
+            </div>
+            <div id="level4" class="toggle-content active">
+                <div class="explanation">
+                    <h3>🏗️ Complete Drone System Architecture</h3>
+                </div>
+
+                <div class="diagram">
+                    <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px; margin-bottom: 20px;">
+                        <h3>🚁 Autonomous Person Tracking Drone</h3>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                            <h4>📥 Perception Layer</h4>
+                            <div class="node-box" style="width: 100%; margin: 5px 0;">Camera Driver</div>
+                            <div class="node-box" style="width: 100%; margin: 5px 0;">YOLO Detector</div>
+                            <div class="node-box" style="width: 100%; margin: 5px 0;">Depth Estimator</div>
+                            <div class="topic-box" style="width: 100%; margin: 5px 0;">/image_raw</div>
+                            <div class="topic-box" style="width: 100%; margin: 5px 0;">/detections</div>
+                        </div>
+
+                        <div style="background: #fff9c4; padding: 15px; border-radius: 8px;">
+                            <h4>🧠 Intelligence Layer</h4>
+                            <div class="node-box" style="width: 100%; margin: 5px 0;">Tracker</div>
+                            <div class="node-box" style="width: 100%; margin: 5px 0;">Path Planner</div>
+                            <div class="node-box" style="width: 100%; margin: 5px 0;">Decision Maker</div>
+                            <div class="topic-box" style="width: 100%; margin: 5px 0;">/target_pose</div>
+                            <div class="action-box" style="width: 100%; margin: 5px 0;">/follow_person</div>
+                        </div>
+
+                        <div style="background: #ffccbc; padding: 15px; border-radius: 8px;">
+                            <h4>🎮 Control Layer</h4>
+                            <div class="node-box" style="width: 100%; margin: 5px 0;">Gimbal Ctrl</div>
+                            <div class="node-box" style="width: 100%; margin: 5px 0;">Flight Ctrl</div>
+                            <div class="node-box" style="width: 100%; margin: 5px 0;">Safety Monitor</div>
+                            <div class="topic-box" style="width: 100%; margin: 5px 0;">/cmd_vel</div>
+                            <div class="service-box" style="width: 100%; margin: 5px 0;">/emergency_stop</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="explanation">
+                    <h3>🎯 Best Practices for Production</h3>
+                    <ul>
+                        <li><strong>Namespaces:</strong> Group related nodes (/drone1/camera, /drone1/controller)</li>
+                        <li><strong>Launch Files:</strong> Start multiple nodes together with parameters</li>
+                        <li><strong>Parameters:</strong> Configure nodes without recompiling (camera resolution, detection threshold)</li>
+                        <li><strong>Logging:</strong> Use ROS2 logging levels (DEBUG, INFO, WARN, ERROR)</li>
+                        <li><strong>TF2:</strong> Coordinate frame transformations (camera → drone → world)</li>
+                        <li><strong>Bags:</strong> Record and replay data for testing</li>
+                    </ul>
+                </div>
+
+                <div class="code-block">
+<span class="comment"># Advanced launch file example</span>
+<span class="keyword">from</span> launch <span class="keyword">import</span> LaunchDescription
+<span class="keyword">from</span> launch_ros.actions <span class="keyword">import</span> Node
+
+<span class="keyword">def</span> generate_launch_description():
+    <span class="keyword">return</span> LaunchDescription([
+        <span class="comment"># Camera node</span>
+        Node(
+            package=<span class="string">'camera_driver'</span>,
+            executable=<span class="string">'camera_node'</span>,
+            name=<span class="string">'siyi_camera'</span>,
+            parameters=[{
+                <span class="string">'resolution'</span>: <span class="string">'1920x1080'</span>,
+                <span class="string">'fps'</span>: <span class="string">30</span>
+            }]
+        ),
+        
+        <span class="comment"># Detector node</span>
+        Node(
+            package=<span class="string">'person_tracker'</span>,
+            executable=<span class="string">'yolo_detector'</span>,
+            name=<span class="string">'detector'</span>,
+            parameters=[{
+                <span class="string">'model_path'</span>: <span class="string">'/models/yolov8n.pt'</span>,
+                <span class="string">'confidence'</span>: <span class="string">0.7</span>
+            }],
+            remappings=[
+                (<span class="string">'/image'</span>, <span class="string">'/camera/image_raw'</span>)
+            ]
+        ),
+        
+        <span class="comment"># Gimbal controller</span>
+        Node(
+            package=<span class="string">'gimbal_control'</span>,
+            executable=<span class="string">'gimbal_node'</span>,
+            name=<span class="string">'gimbal'</span>
+        )
+    ])
+                </div>
+
+                <div class="diagram">
+                    <h4 style="text-align: center;">🔄 Complete Message Flow</h4>
+                    <div style="background: #f5f5f5; padding: 20px; border-radius: 10px;">
+                        <p style="text-align: center; font-family: monospace; line-height: 2;">
+                            Camera (30fps) → /image_raw [sensor_msgs/Image] →<br>
+                            YOLO Node → /detections [vision_msgs/Detection2DArray] →<br>
+                            Tracker Node → /target_pose [geometry_msgs/PoseStamped] →<br>
+                            Gimbal Controller → MAVLink Commands → Physical Gimbal
+                        </p>
+                    </div>
+                </div>
+
+                <div class="explanation">
+                    <h3>📊 ROS2 vs ROS1: Why Upgrade?</h3>
+                    <div class="grid-2">
+                        <div style="background: #ffcdd2; padding: 15px; border-radius: 8px;">
+                            <h4>❌ ROS1 Issues</h4>
+                            <ul>
+                                <li>Single point of failure (roscore)</li>
+                                <li>No real-time support</li>
+                                <li>TCP only (slower)</li>
+                                <li>Python 2 based</li>
+                                <li>No built-in security</li>
+                            </ul>
+                        </div>
+                        <div style="background: #c8e6c9; padding: 15px; border-radius: 8px;">
+                            <h4>✅ ROS2 Advantages</h4>
+                            <ul>
+                                <li>Decentralized (no master)</li>
+                                <li>Real-time capable (DDS)</li>
+                                <li>UDP multicast (faster)</li>
+                                <li>Python 3 & C++17</li>
+                                <li>Built-in security (SROS2)</li>
+                                <li>Better Windows support</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Reference -->
+        <div class="level">
+            <div class="level-header">
+                <span class="level-badge">CHEAT SHEET</span>
+                <h2 class="level-title">⚡ Quick Command Reference</h2>
+            </div>
+            <div class="code-block">
+<span class="comment"># List all nodes</span>
+ros2 node list
+
+<span class="comment"># List all topics</span>
+ros2 topic list
+
+<span class="comment"># See topic messages</span>
+ros2 topic echo /camera/image_raw
+
+<span class="comment"># Check topic info</span>
+ros2 topic info /camera/image_raw
+
+<span class="comment"># Publish a message</span>
+ros2 topic pub /cmd_vel geometry_msgs/Twist <span class="string">"{linear: {x: 1.0}}"</span>
+
+<span class="comment"># Run a node</span>
+ros2 run package_name node_name
+
+<span class="comment"># Launch multiple nodes</span>
+ros2 launch package_name launch_file.py
+
+<span class="comment"># Record data</span>
+ros2 bag record -a
+
+<span class="comment"># Replay recorded data</span>
+ros2 bag play my_bag
+
+<span class="comment"># See node graph</span>
+ros2 run rqt_graph rqt_graph
+
+<span class="comment"># Monitor system</span>
+ros2 run rqt_console rqt_console
+            </div>
+        </div>
+
+        <div style="text-align: center; color: white; padding: 40px 20px;">
+            <h2>🎉 You're now ready to build ROS2 systems!</h2>
+            <p style="margin-top: 20px; font-size: 1.1em;">
+                Start with simple pub/sub, then progress to services, actions, and finally full system architectures.
+            </p>
+            <button class="btn" onclick="toggleAll()">Toggle All Sections</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleLevel(levelId) {
+            const content = document.getElementById(levelId);
+            content.classList.toggle('active');
+        }
+
+        function toggleAll() {
+            const allContent = document.querySelectorAll('.toggle-content');
+            const anyActive = Array.from(allContent).some(el => el.classList.contains('active'));
+            
+            allContent.forEach(content => {
+                if (anyActive) {
+                    content.classList.remove('active');
+                } else {
+                    content.classList.add('active');
+                }
+            });
+        }
+
+        // Add smooth scroll behavior
+        document.querySelectorAll('.level-header').forEach(header => {
+            header.addEventListener('click', function() {
+                this.parentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // Add hover effects for interactive elements
+        document.querySelectorAll('.node-box, .topic-box, .service-box, .action-box').forEach(box => {
+            box.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1) rotate(2deg)';
+            });
+            box.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+    </script>
+</body>
+</html>
